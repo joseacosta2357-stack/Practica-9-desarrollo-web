@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
-import { Text, View } from '@/components/Themed';
+import { StyleSheet, TouchableOpacity, useColorScheme, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function DescansoScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
-  const cardBg = isDark ? '#1e1e1e' : '#ffffff';
+  const cardBg = isDark ? '#1c1c1e' : '#ffffff';
   const textColor = isDark ? '#ffffff' : '#000000';
-  const subtextColor = isDark ? '#aaaaaa' : '#666666';
+  const subtextColor = isDark ? '#ebebf5' : '#3c3c43';
+  const pageBg = isDark ? '#000000' : '#f2f2f7';
 
   const [isActive, setIsActive] = useState(false);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: pageBg }]}>
       <View style={styles.timerContainer}>
         <View style={[styles.timerCircle, { borderColor: isActive ? '#007AFF' : cardBg, backgroundColor: cardBg }]}>
           <Text style={[styles.timeText, { color: textColor }]}>01:30</Text>

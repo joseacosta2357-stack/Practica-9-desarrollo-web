@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, TouchableOpacity, useColorScheme, TextInput, Image } from 'react-native';
-import { Text, View } from '@/components/Themed';
+import { StyleSheet, ScrollView, TouchableOpacity, useColorScheme, TextInput, Image, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function EjerciciosScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
-  const cardBg = isDark ? '#1e1e1e' : '#ffffff';
+  const cardBg = isDark ? '#1c1c1e' : '#ffffff';
   const textColor = isDark ? '#ffffff' : '#000000';
-  const subtextColor = isDark ? '#aaaaaa' : '#666666';
+  const subtextColor = isDark ? '#ebebf5' : '#3c3c43';
   const inputBg = isDark ? '#2c2c2e' : '#f2f2f7';
+  const pageBg = isDark ? '#000000' : '#f2f2f7';
+  const placeholderColor = isDark ? '#8e8e93' : '#c7c7cc';
 
   const filters = ['Todos', 'Pecho', 'Espalda', 'Piernas', 'Brazos', 'Hombros', 'Core'];
   const [activeFilter, setActiveFilter] = useState('Todos');
@@ -24,14 +25,14 @@ export default function EjerciciosScreen() {
   ];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: pageBg }]}>
       <View style={[styles.header, { backgroundColor: cardBg }]}>
         <View style={[styles.searchContainer, { backgroundColor: inputBg }]}>
           <Ionicons name="search" size={20} color={subtextColor} style={styles.searchIcon} />
           <TextInput
             style={[styles.searchInput, { color: textColor }]}
             placeholder="Buscar ejercicios..."
-            placeholderTextColor={subtextColor}
+            placeholderTextColor={placeholderColor}
           />
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filtersContainer}>

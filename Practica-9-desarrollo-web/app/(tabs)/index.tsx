@@ -1,6 +1,5 @@
 import React from 'react';
-import { StyleSheet, ScrollView, TouchableOpacity, useColorScheme } from 'react-native';
-import { Text, View } from '@/components/Themed';
+import { StyleSheet, ScrollView, TouchableOpacity, useColorScheme, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
 
@@ -9,9 +8,10 @@ export default function InicioScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
-  const cardBg = isDark ? '#1e1e1e' : '#ffffff';
+  const cardBg = isDark ? '#1c1c1e' : '#ffffff';
   const textColor = isDark ? '#ffffff' : '#000000';
-  const subtextColor = isDark ? '#aaaaaa' : '#666666';
+  const subtextColor = isDark ? '#ebebf5' : '#3c3c43';
+  const pageBg = isDark ? '#000000' : '#f2f2f7';
 
   const cards = [
     {
@@ -41,8 +41,8 @@ export default function InicioScreen() {
   ];
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.headerTitle}>Resumen Semanal</Text>
+    <ScrollView style={[styles.container, { backgroundColor: pageBg }]} contentContainerStyle={styles.content}>
+      <Text style={[styles.headerTitle, { color: textColor }]}>Resumen Semanal</Text>
       
       <View style={[styles.statsContainer, { backgroundColor: cardBg }]}>
         <View style={styles.statBox}>
@@ -59,7 +59,7 @@ export default function InicioScreen() {
         </View>
       </View>
 
-      <Text style={styles.sectionTitle}>Acciones Rápidas</Text>
+      <Text style={[styles.sectionTitle, { color: textColor }]}>Acciones Rápidas</Text>
 
       {cards.map((card, index) => (
         <TouchableOpacity
@@ -67,7 +67,7 @@ export default function InicioScreen() {
           style={[styles.card, { backgroundColor: cardBg }]}
           onPress={() => router.push(card.route as any)}
         >
-          <View style={styles.cardIconContainer}>
+          <View style={[styles.cardIconContainer, { backgroundColor: isDark ? '#2c2c2e' : 'rgba(0,0,0,0.05)' }]}>
             {card.icon}
           </View>
           <View style={styles.cardTextContainer}>
@@ -138,7 +138,6 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: 'rgba(0,0,0,0.05)',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 16,

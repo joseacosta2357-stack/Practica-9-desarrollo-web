@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, TouchableOpacity, useColorScheme } from 'react-native';
-import { Text, View } from '@/components/Themed';
+import { StyleSheet, ScrollView, TouchableOpacity, useColorScheme, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function HistorialScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
-  const cardBg = isDark ? '#1e1e1e' : '#ffffff';
+  const cardBg = isDark ? '#1c1c1e' : '#ffffff';
   const textColor = isDark ? '#ffffff' : '#000000';
-  const subtextColor = isDark ? '#aaaaaa' : '#666666';
-  const accentColor = isDark ? '#333333' : '#f0f0f0';
+  const subtextColor = isDark ? '#ebebf5' : '#3c3c43';
+  const accentColor = isDark ? '#38383a' : '#e5e5ea';
+  const pageBg = isDark ? '#000000' : '#f2f2f7';
 
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
@@ -49,7 +49,7 @@ export default function HistorialScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: pageBg }]}>
       <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
         {mockHistory.map((workout) => {
           const isExpanded = expandedId === workout.id;
