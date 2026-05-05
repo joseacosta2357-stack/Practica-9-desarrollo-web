@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { StyleSheet, ScrollView, TouchableOpacity, useColorScheme, TextInput, View, Text } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { StyleSheet, ScrollView, TouchableOpacity, useColorScheme, TextInput, View, Text, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { WorkoutContext, WorkoutSession } from '../context/WorkoutContext';
 
 type WorkoutSet = {
   id: string;
@@ -16,6 +18,11 @@ type Exercise = {
 };
 
 export default function EntrenarScreen() {
+  const router = useRouter();
+  const { saveWorkout } = useContext(WorkoutContext);
+  const [sessionName, setSessionName] = useState('Nueva Sesión');
+  const [startTime] = useState(Date.now());
+
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
@@ -100,12 +107,54 @@ export default function EntrenarScreen() {
     }));
   };
 
+  const finishWorkout = async () => {
+    if (exercises.length === 0) {
+      Alert.alert('Sesión vacía', 'Añade al menos un ejercicio antes de finalizar.');
+      return;
+    }
+
+    let totalVolume = 0;
+    let records = 0;
+
+    exercises.forEach(ex => {
+      ex.sets.forEach(set => {
+        if (set.completed && set.weight && set.reps) {
+          const w = parseFloat(set.weight.replace(',', '.'));
+          const r = parseInt(set.reps, 10);
+          if (!isNaN(w) && !isNaN(r)) {
+            totalVolume += w * r;
+          }
+        }
+      });
+    });
+
+    const newSession: WorkoutSession = {
+      id: Date.now().toString(),
+      name: sessionName,
+      date: new Date().toISOString(),
+      durationMs: Date.now() - startTime,
+      exercises: exercises,
+      volume: totalVolume,
+      records: records,
+    };
+
+    await saveWorkout(newSession);
+    
+    // Limpiar formulario
+    setExercises([]);
+    setSessionName('Nueva Sesión');
+    
+    // Ir al historial
+    router.push('/historial');
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: pageBg }]}>
       <View style={[styles.header, { backgroundColor: cardBg }]}>
         <TextInput 
           style={[styles.headerTitleInput, { color: textColor }]} 
-          defaultValue="Nueva Sesión"
+          value={sessionName}
+          onChangeText={setSessionName}
           placeholder="Nombre del entrenamiento"
           placeholderTextColor={placeholderColor}
         />
@@ -212,7 +261,7 @@ export default function EntrenarScreen() {
       </ScrollView>
 
       <View style={[styles.footer, { backgroundColor: cardBg, borderTopColor: isDark ? '#333' : '#eee' }]}>
-        <TouchableOpacity style={styles.finishButton}>
+        <TouchableOpacity style={styles.finishButton} onPress={finishWorkout}>
           <Text style={styles.finishButtonText}>Finalizar Entrenamiento</Text>
         </TouchableOpacity>
       </View>
