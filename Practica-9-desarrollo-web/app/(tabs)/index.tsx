@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { StyleSheet, ScrollView, TouchableOpacity, useColorScheme, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
+import { WorkoutContext } from '../context/WorkoutContext';
 
 export default function InicioScreen() {
   const router = useRouter();
@@ -13,48 +14,86 @@ export default function InicioScreen() {
   const subtextColor = isDark ? '#ebebf5' : '#3c3c43';
   const pageBg = isDark ? '#000000' : '#f2f2f7';
 
+  const { history } = useContext(WorkoutContext);
+
+  const totalSessions = history.length;
+  const totalVolume = history.reduce((sum, session) => sum + session.volume, 0);
+  const totalDurationMs = history.reduce((sum, session) => sum + session.durationMs, 0);
+
+  const formatDuration = (ms: number) => {
+    if (ms === 0) return '0m';
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    if (hours > 0) return `${hours}h ${minutes}m`;
+    return `${minutes}m`;
+  };
+
+  const formatVolume = (vol: number) => {
+    if (vol >= 1000) {
+      return (vol / 1000).toFixed(1) + 'k';
+    }
+    return vol.toString();
+  };
+
+  const lastSession = history.length > 0 ? history[0] : null;
+
+  const getTimeAgo = (dateString: string) => {
+    const diff = Date.now() - new Date(dateString).getTime();
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    if (days === 0) return 'hoy';
+    if (days === 1) return 'hace 1 día';
+    return `hace ${days} días`;
+  };
+
   const cards = [
     {
       title: 'Empezar Entrenamiento',
-      subtitle: 'Último: Pecho y Tríceps (hace 2 días)',
+      subtitle: lastSession ? `Último: ${lastSession.name || 'Sesión'} (${getTimeAgo(lastSession.date)})` : 'Comienza tu primera sesión',
       icon: <MaterialCommunityIcons name="weight-lifter" size={32} color="#007AFF" />,
       route: '/entrenar',
     },
     {
       title: 'Historial',
-      subtitle: '4 entrenamientos esta semana',
+      subtitle: totalSessions > 0 ? `${totalSessions} entrenamientos registrados` : 'Aún no hay registros',
       icon: <Ionicons name="time" size={32} color="#34C759" />,
       route: '/historial',
     },
     {
       title: 'Descanso',
-      subtitle: 'Temporizador inactivo',
+      subtitle: 'Temporizador funcional listo',
       icon: <Ionicons name="timer" size={32} color="#FF9500" />,
       route: '/descanso',
     },
     {
       title: 'Ejercicios',
-      subtitle: '12 ejercicios recientes',
+      subtitle: 'Biblioteca completa con 12 ejercicios',
       icon: <FontAwesome5 name="dumbbell" size={24} color="#AF52DE" />,
       route: '/ejercicios',
+    },
+    {
+      title: 'Progreso',
+      subtitle: 'Registra peso, medidas y fotos',
+      icon: <Ionicons name="trending-up" size={32} color="#007AFF" />,
+      route: '/progreso',
     },
   ];
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: pageBg }]} contentContainerStyle={styles.content}>
-      <Text style={[styles.headerTitle, { color: textColor }]}>Resumen Semanal</Text>
+      <Text style={[styles.headerTitle, { color: textColor }]}>Resumen Global</Text>
       
       <View style={[styles.statsContainer, { backgroundColor: cardBg }]}>
         <View style={styles.statBox}>
-          <Text style={[styles.statValue, { color: textColor }]}>4</Text>
+          <Text style={[styles.statValue, { color: textColor }]}>{totalSessions}</Text>
           <Text style={[styles.statLabel, { color: subtextColor }]}>Sesiones</Text>
         </View>
         <View style={styles.statBox}>
-          <Text style={[styles.statValue, { color: textColor }]}>5h 20m</Text>
+          <Text style={[styles.statValue, { color: textColor }]}>{formatDuration(totalDurationMs)}</Text>
           <Text style={[styles.statLabel, { color: subtextColor }]}>Tiempo</Text>
         </View>
         <View style={styles.statBox}>
-          <Text style={[styles.statValue, { color: textColor }]}>12k</Text>
+          <Text style={[styles.statValue, { color: textColor }]}>{formatVolume(totalVolume)}</Text>
           <Text style={[styles.statLabel, { color: subtextColor }]}>Volumen (kg)</Text>
         </View>
       </View>
